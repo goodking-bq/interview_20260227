@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  wallet-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: wallet-service
+    ports:
+      - "8080:8080"  # REST API
+      - "9090:9090"  # gRPC API
+    environment:
+      - REST_PORT=8080
+      - GRPC_PORT=9090
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/wallets"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s

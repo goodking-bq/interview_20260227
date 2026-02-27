@@ -1,0 +1,150 @@
+basePath: /
+definitions:
+  model.CreateWalletResponse:
+    properties:
+      id:
+        type: string
+    type: object
+  model.ErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  model.TransferRequest:
+    properties:
+      amount:
+        example: 100
+        type: integer
+      from_wallet_id:
+        example: 550e8400-e29b-41d4-a716-446655440000
+        type: string
+      to_wallet_id:
+        example: 660e8400-e29b-41d4-a716-446655440001
+        type: string
+    required:
+    - amount
+    - from_wallet_id
+    - to_wallet_id
+    type: object
+  model.TransferResponse:
+    properties:
+      amount:
+        type: integer
+      from:
+        type: string
+      message:
+        type: string
+      to:
+        type: string
+    type: object
+  model.WalletResponse:
+    properties:
+      balance:
+        type: integer
+      id:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact:
+    email: support@example.com
+    name: API 支持
+    url: http://www.example.com/support
+  description: 这是一个提供钱包创建、查询和转账功能的 REST API 服务
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: 钱包服务 API
+  version: "1.0"
+paths:
+  /wallets:
+    post:
+      consumes:
+      - application/json
+      description: 创建一个新的钱包，自动生成唯一ID
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 创建成功
+          schema:
+            $ref: '#/definitions/model.CreateWalletResponse'
+        "500":
+          description: 服务器内部错误
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: 创建新钱包
+      tags:
+      - 钱包管理
+  /wallets/{id}:
+    get:
+      consumes:
+      - application/json
+      description: 根据钱包ID获取钱包的详细信息，包括余额
+      parameters:
+      - description: 钱包ID
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 获取成功
+          schema:
+            $ref: '#/definitions/model.WalletResponse'
+        "400":
+          description: 无效的请求参数
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "404":
+          description: 钱包不存在
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: 服务器内部错误
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: 获取钱包信息
+      tags:
+      - 钱包管理
+  /wallets/transfer:
+    post:
+      consumes:
+      - application/json
+      description: 从一个钱包转账到另一个钱包，金额必须大于0且源钱包余额充足
+      parameters:
+      - description: 转账请求
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.TransferRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 转账成功
+          schema:
+            $ref: '#/definitions/model.TransferResponse'
+        "400":
+          description: 无效的请求参数
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "404":
+          description: 钱包不存在
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+        "500":
+          description: 服务器内部错误
+          schema:
+            $ref: '#/definitions/model.ErrorResponse'
+      summary: 钱包间转账
+      tags:
+      - 钱包管理
+schemes:
+- http
+swagger: "2.0"

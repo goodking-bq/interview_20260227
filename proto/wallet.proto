@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package wallet;
+
+option go_package = "interview/proto";
+
+// WalletService 提供钱包操作服务
+service WalletService {
+  // CreateWallet 创建一个余额为零的新钱包
+  rpc CreateWallet(CreateWalletRequest) returns (CreateWalletResponse);
+
+  // GetWallet 根据 ID 获取钱包信息
+  rpc GetWallet(GetWalletRequest) returns (GetWalletResponse);
+
+  // Transfer 从一个钱包向另一个钱包转账
+  rpc Transfer(TransferRequest) returns (TransferResponse);
+}
+
+// CreateWalletRequest 创建钱包请求
+message CreateWalletRequest {}
+
+// CreateWalletResponse 创建钱包响应
+message CreateWalletResponse {
+  string id = 1; // 钱包 ID
+}
+
+// GetWalletRequest 获取钱包请求
+message GetWalletRequest {
+  string id = 1; // 钱包 ID
+}
+
+// GetWalletResponse 获取钱包响应
+message GetWalletResponse {
+  string id = 1;      // 钱包 ID
+  int64 balance = 2;  // 余额
+}
+
+// TransferRequest 转账请求
+message TransferRequest {
+  string from_wallet_id = 1; // 转出钱包 ID
+  string to_wallet_id = 2;   // 转入钱包 ID
+  int64 amount = 3;          // 转账金额
+}
+
+// TransferResponse 转账响应
+message TransferResponse {
+  string message = 1; // 消息
+  string from = 2;    // 转出钱包 ID
+  string to = 3;      // 转入钱包 ID
+  int64 amount = 4;   // 转账金额
+}
